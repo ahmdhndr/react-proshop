@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Row,
   Col,
@@ -8,79 +9,118 @@ import {
   Card,
   Button,
   ListGroupItem,
+  Form,
 } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import axios from 'axios';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { listProductDetails } from '../actions/productActions';
 
 const ProductScreen = ({ match }) => {
-  const [product, setProduct] = useState({});
+  const [qty, setQty] = useState(0);
+
+  const dispatch = useDispatch();
+
+  const productDetails = useSelector(state => state.productDetails);
+  const { loading, error, product } = productDetails;
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      const { data } = await axios.get(`/api/products/${match.params.id}`);
-
-      setProduct(data);
-    };
-
-    fetchProduct();
-  }, [match]);
+    dispatch(listProductDetails(match.params.id));
+  }, [dispatch, match]);
 
   return (
     <>
       <Link to="/">
         <i className="fas fa-arrow-left fa-2x my-3"></i>
       </Link>
-      <Row>
-        <Col md={6}>
-          <Image src={product.image} alt={product.name} fluid />
-        </Col>
-        <Col md={6} lg={3}>
-          <ListGroup variant="flush">
-            <ListGroupItem>
-              <h3>{product.name}</h3>
-            </ListGroupItem>
-            <ListGroupItem>
-              <Rating
-                value={product.rating}
-                text={`${product.numReviews} reviews`}
-              />
-            </ListGroupItem>
-            <ListGroupItem>Price: ${product.price}</ListGroupItem>
-            <ListGroupItem>Description: {product.description}</ListGroupItem>
-          </ListGroup>
-        </Col>
-        <Col lg={3}>
-          <Card>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <Row>
+          <Col md={6}>
+            <Image src={product.image} alt={product.name} fluid />
+          </Col>
+          <Col md={6} lg={3}>
             <ListGroup variant="flush">
               <ListGroupItem>
-                <Row>
-                  <Col>Price:</Col>
-                  <Col>
-                    <strong>${product.price}</strong>
-                  </Col>
-                </Row>
+                <h3>{product.name}</h3>
               </ListGroupItem>
+
               <ListGroupItem>
-                <Row>
-                  <Col>Status:</Col>
-                  <Col>
-                    {product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}
-                  </Col>
-                </Row>
+                <Rating
+                  value={product.rating}
+                  text={`${product.numReviews} reviews`}
+                />
               </ListGroupItem>
-              <ListGroupItem>
-                <Button
-                  className="btn-block"
-                  type="button"
-                  disabled={product.countInStock === 0}
-                >
-                  Add To Cart
-                </Button>
-              </ListGroupItem>
+
+              <ListGroupItem>Price: ${product.price}</ListGroupItem>
+              <ListGroupItem>Description: {product.description}</ListGroupItem>
             </ListGroup>
-          </Card>
-        </Col>
-      </Row>
+          </Col>
+          <Col lg={3}>
+            <Card>
+              <ListGroup variant="flush">
+                <ListGroupItem>
+                  <Row>
+                    <Col>Price:</Col>
+                    <Col>
+                      <strong>${product.price}</strong>
+                    </Col>
+                  </Row>
+                </ListGroupItem>
+
+                <ListGroupItem>
+                  <Row>
+                    <Col>Status:</Col>
+                    <Col>
+                      {product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}
+                    </Col>
+                  </Row>
+                </ListGroupItem>
+
+                {product.countInStock > 0 && (
+                  <ListGroupItem>
+                    <Row>
+                      <Col
+                        className="align-self-center"
+                        style={{ marginTop: '-5px' }}
+                      >
+                        Qty
+                      </Col>
+                      <Col>
+                        <Form.Control
+                          as="select"
+                          value={qty}
+                          onChange={e => setQty(e.target.value)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {[...Array(product.countInStock).keys()].map(x => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Col>
+                    </Row>
+                  </ListGroupItem>
+                )}
+
+                <ListGroupItem>
+                  <Button
+                    className="btn-block"
+                    type="button"
+                    disabled={product.countInStock === 0}
+                  >
+                    Add To Cart
+                  </Button>
+                </ListGroupItem>
+              </ListGroup>
+            </Card>
+          </Col>
+        </Row>
+      )}
     </>
   );
 };

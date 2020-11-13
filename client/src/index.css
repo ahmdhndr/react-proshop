@@ -11,8 +11,9 @@ a:hover {
   text-decoration: none;
 }
 
-a:focus {
-  outline: none;
+a:focus,
+select.form-control:focus {
+  outline: none !important;
 }
 
 .navbar button:focus {
