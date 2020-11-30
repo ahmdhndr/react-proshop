@@ -11,8 +11,7 @@ a:hover {
   text-decoration: none;
 }
 
-a:focus,
-select.form-control:focus {
+a:focus {
   outline: none !important;
 }
 

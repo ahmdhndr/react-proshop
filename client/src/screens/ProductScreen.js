@@ -12,12 +12,12 @@ import {
   Form,
 } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import Loader from '../components/Loader';
 import Message from '../components/Message';
+import Loader from '../components/Loader';
 import { listProductDetails } from '../actions/productActions';
 
-const ProductScreen = ({ match }) => {
-  const [qty, setQty] = useState(0);
+const ProductScreen = ({ history, match }) => {
+  const [qty, setQty] = useState(1);
 
   const dispatch = useDispatch();
 
@@ -28,22 +28,26 @@ const ProductScreen = ({ match }) => {
     dispatch(listProductDetails(match.params.id));
   }, [dispatch, match]);
 
+  const addToCartHandler = () => {
+    history.push(`/cart/${match.params.id}?qty=${qty}`);
+  };
+
   return (
     <>
-      <Link to="/">
-        <i className="fas fa-arrow-left fa-2x my-3"></i>
+      <Link to='/'>
+        <i className='fas fa-arrow-left fa-2x my-3'></i>
       </Link>
       {loading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error}</Message>
+        <Message variant='danger'>{error}</Message>
       ) : (
         <Row>
           <Col md={6}>
             <Image src={product.image} alt={product.name} fluid />
           </Col>
           <Col md={6} lg={3}>
-            <ListGroup variant="flush">
+            <ListGroup variant='flush'>
               <ListGroupItem>
                 <h3>{product.name}</h3>
               </ListGroupItem>
@@ -61,7 +65,7 @@ const ProductScreen = ({ match }) => {
           </Col>
           <Col lg={3}>
             <Card>
-              <ListGroup variant="flush">
+              <ListGroup variant='flush'>
                 <ListGroupItem>
                   <Row>
                     <Col>Price:</Col>
@@ -84,14 +88,14 @@ const ProductScreen = ({ match }) => {
                   <ListGroupItem>
                     <Row>
                       <Col
-                        className="align-self-center"
+                        className='align-self-center'
                         style={{ marginTop: '-5px' }}
                       >
                         Qty
                       </Col>
                       <Col>
                         <Form.Control
-                          as="select"
+                          as='select'
                           value={qty}
                           onChange={e => setQty(e.target.value)}
                           style={{ cursor: 'pointer' }}
@@ -109,8 +113,9 @@ const ProductScreen = ({ match }) => {
 
                 <ListGroupItem>
                   <Button
-                    className="btn-block"
-                    type="button"
+                    onClick={addToCartHandler}
+                    className='btn-block'
+                    type='button'
                     disabled={product.countInStock === 0}
                   >
                     Add To Cart
