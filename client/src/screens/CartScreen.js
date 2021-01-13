@@ -44,9 +44,9 @@ const CartScreen = ({ match, location, history }) => {
         <h1>Shopping Carts</h1>
         {cartItems.length === 0 ? (
           <Message>
-            Your cart is empty{' '}
+            Your cart is empty <br />
             <Link to='/' style={{ textDecoration: 'none' }}>
-              Go Back
+              <i className='fas fa-angle-double-left'></i> Go Back
             </Link>
           </Message>
         ) : (
