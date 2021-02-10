@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import swal from 'sweetalert';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { listUsers } from '../actions/userActions';
+import { listUsers, deleteUser } from '../actions/userActions';
 
 const UserListScreen = () => {
   const dispatch = useDispatch();
@@ -12,12 +13,35 @@ const UserListScreen = () => {
   const userList = useSelector(state => state.userList);
   const { loading, error, users } = userList;
 
+  // const userLogin = useSelector(state => state.userLogin);
+  // const { userInfo } = userLogin;
+
+  const userDelete = useSelector(state => state.userDelete);
+  const { success: successDelete } = userDelete;
+
   useEffect(() => {
     dispatch(listUsers());
-  }, [dispatch]);
+  }, [dispatch, successDelete]);
 
   const deleteHandler = id => {
-    console.log(id);
+    // eslint-disable-next-line
+    users.map(user => {
+      if (user._id === id) {
+        swal({
+          title: `Are you sure want to delete user ${user.name}?`,
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true,
+        }).then(deleteData => {
+          if (deleteData) {
+            dispatch(deleteUser(id));
+            swal(`user ${user.name} has been deleted`, {
+              icon: 'success',
+            });
+          }
+        });
+      }
+    });
   };
   return (
     <>
