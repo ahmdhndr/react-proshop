@@ -28,14 +28,15 @@ const UserListScreen = () => {
     users.map(user => {
       if (user._id === id) {
         swal({
-          title: `Are you sure want to delete user ${user.name}?`,
+          title: 'Are you sure?',
+          text: `User ${user.name} will be deleted!`,
           icon: 'warning',
           buttons: true,
           dangerMode: true,
         }).then(deleteData => {
           if (deleteData) {
             dispatch(deleteUser(id));
-            swal(`user ${user.name} has been deleted`, {
+            swal(`User ${user.name} has been deleted`, {
               icon: 'success',
             });
           }
@@ -43,6 +44,7 @@ const UserListScreen = () => {
       }
     });
   };
+
   return (
     <>
       <h1>Users</h1>
@@ -77,7 +79,7 @@ const UserListScreen = () => {
                   )}
                 </td>
                 <td style={{ textAlign: 'center' }}>
-                  <LinkContainer to={`/user/${user._id}/edit`}>
+                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
                     <Button variant='light' className='btn-sm mr-2'>
                       <i className='fas fa-edit'></i>
                     </Button>
