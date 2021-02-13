@@ -14,6 +14,7 @@ const UserEditScreen = ({ match, history }) => {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ const UserEditScreen = ({ match, history }) => {
     if (successUpdate) {
       swal({
         title: 'Success',
-        text: `User updated`,
+        text: 'User updated',
         icon: 'success',
       });
       dispatch({ type: USER_UPDATE_RESET });
@@ -45,6 +46,7 @@ const UserEditScreen = ({ match, history }) => {
       } else {
         setName(user.name);
         setEmail(user.email);
+        setRole(user.role);
         setIsAdmin(user.isAdmin);
       }
     }
@@ -53,7 +55,7 @@ const UserEditScreen = ({ match, history }) => {
   const submitHandler = e => {
     e.preventDefault();
     // DISPATCH DETAILS USER
-    dispatch(updateUser({ _id: userId, name, email, isAdmin }));
+    dispatch(updateUser({ _id: userId, name, email, role, isAdmin }));
   };
 
   return (
@@ -74,7 +76,7 @@ const UserEditScreen = ({ match, history }) => {
             <Form.Group controlId='name'>
               <Form.Label>Name</Form.Label>
               <Form.Control
-                type='name'
+                type='text'
                 placeholder='Enter name...'
                 value={name}
                 onChange={e => setName(e.target.value)}

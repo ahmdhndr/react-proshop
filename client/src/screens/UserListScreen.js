@@ -63,7 +63,8 @@ const UserListScreen = ({ history }) => {
               <th>ID</th>
               <th>NAME</th>
               <th>EMAIL</th>
-              <th>ADMIN</th>
+              <th>ROLE</th>
+              <th>IS ADMIN</th>
               <th></th>
             </tr>
           </thead>
@@ -75,6 +76,7 @@ const UserListScreen = ({ history }) => {
                 <td>
                   <a href={`mailto:${user.email}`}>{user.email}</a>
                 </td>
+                <td>{user.role}</td>
                 <td>
                   {user.isAdmin ? (
                     <i className='fas fa-check' style={{ color: 'green' }}></i>

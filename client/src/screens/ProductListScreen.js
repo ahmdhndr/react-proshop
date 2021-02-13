@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { listProducts } from '../actions/productActions';
+import { listProducts, deleteProduct } from '../actions/productActions';
 
 const ProductListScreen = ({ history }) => {
   const [show, setShow] = useState(false);
@@ -17,6 +17,13 @@ const ProductListScreen = ({ history }) => {
   const productList = useSelector(state => state.productList);
   const { loading, error, products } = productList;
 
+  const productDelete = useSelector(state => state.productDelete);
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = productDelete;
+
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -26,7 +33,7 @@ const ProductListScreen = ({ history }) => {
     } else {
       history.push('/login');
     }
-  }, [dispatch, history, userInfo]);
+  }, [dispatch, history, userInfo, successDelete]);
 
   const deleteHandler = id => {
     // eslint-disable-next-line
@@ -40,11 +47,10 @@ const ProductListScreen = ({ history }) => {
           dangerMode: true,
         }).then(deleteData => {
           if (deleteData) {
-            // dispatch(deleteUser(id));
-            // swal(`User ${user.name} has been deleted`, {
-            //   icon: 'success',
-            // });
-            console.log(product.name);
+            dispatch(deleteProduct(id));
+            swal(`Product ${product.name} has been deleted`, {
+              icon: 'success',
+            });
           }
         });
       }
@@ -71,6 +77,8 @@ const ProductListScreen = ({ history }) => {
           </Button>
         </Col>
       </Row>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message varian='danger'>{errorDelete}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
@@ -82,6 +90,7 @@ const ProductListScreen = ({ history }) => {
               <th>ID</th>
               <th>NAME</th>
               <th>PRICE</th>
+              <th>STOCK</th>
               <th>CATEGORY</th>
               <th>BRAND</th>
               <th></th>
@@ -92,7 +101,8 @@ const ProductListScreen = ({ history }) => {
               <tr key={product._id}>
                 <td>{product._id}</td>
                 <td>{product.name}</td>
-                <td>{product.price}</td>
+                <td>${product.price}</td>
+                <td>{product.countInStock}</td>
                 <td>{product.category}</td>
                 <td>{product.brand}</td>
                 <td style={{ textAlign: 'center' }}>
@@ -114,7 +124,6 @@ const ProductListScreen = ({ history }) => {
           </tbody>
         </Table>
       )}
-
       {/* Modal */}
       <Modal
         show={show}
