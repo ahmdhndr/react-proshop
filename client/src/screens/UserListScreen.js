@@ -7,21 +7,25 @@ import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { listUsers, deleteUser } from '../actions/userActions';
 
-const UserListScreen = () => {
+const UserListScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const userList = useSelector(state => state.userList);
   const { loading, error, users } = userList;
 
-  // const userLogin = useSelector(state => state.userLogin);
-  // const { userInfo } = userLogin;
+  const userLogin = useSelector(state => state.userLogin);
+  const { userInfo } = userLogin;
 
   const userDelete = useSelector(state => state.userDelete);
   const { success: successDelete } = userDelete;
 
   useEffect(() => {
-    dispatch(listUsers());
-  }, [dispatch, successDelete]);
+    if (userInfo && userInfo.isAdmin) {
+      dispatch(listUsers());
+    } else {
+      history.push('/login');
+    }
+  }, [dispatch, history, successDelete, userInfo]);
 
   const deleteHandler = id => {
     // eslint-disable-next-line
