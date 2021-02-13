@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { listProducts, deleteProduct } from '../actions/productActions';
+import {
+  listProducts,
+  deleteProduct,
+  createProduct,
+} from '../actions/productActions';
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = ({ history }) => {
   const [show, setShow] = useState(false);
@@ -24,16 +29,37 @@ const ProductListScreen = ({ history }) => {
     success: successDelete,
   } = productDelete;
 
+  const productCreate = useSelector(state => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
+
   const userLogin = useSelector(state => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
-    } else {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
+    if (!userInfo.isAdmin) {
       history.push('/login');
     }
-  }, [dispatch, history, userInfo, successDelete]);
+
+    if (successCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(listProducts());
+    }
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    successDelete,
+    successCreate,
+    createdProduct,
+  ]);
 
   const deleteHandler = id => {
     // eslint-disable-next-line
@@ -57,8 +83,9 @@ const ProductListScreen = ({ history }) => {
     });
   };
 
-  const createProductHandler = product => {
+  const createProductHandler = () => {
     // Create Product
+    dispatch(createProduct());
   };
 
   return (
@@ -78,7 +105,9 @@ const ProductListScreen = ({ history }) => {
         </Col>
       </Row>
       {loadingDelete && <Loader />}
-      {errorDelete && <Message varian='danger'>{errorDelete}</Message>}
+      {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant='danger'>{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
