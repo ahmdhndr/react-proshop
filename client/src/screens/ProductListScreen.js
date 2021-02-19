@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Button, Row, Col, Modal, Form } from 'react-bootstrap';
+import { Table, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import swal from 'sweetalert';
 import Message from '../components/Message';
@@ -13,10 +13,6 @@ import {
 import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = ({ history }) => {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   const dispatch = useDispatch();
 
   const productList = useSelector(state => state.productList);
@@ -73,6 +69,7 @@ const ProductListScreen = ({ history }) => {
           dangerMode: true,
         }).then(deleteData => {
           if (deleteData) {
+            loadingDelete && <Loader />;
             dispatch(deleteProduct(id));
             swal(`Product ${product.name} has been deleted`, {
               icon: 'success',
@@ -84,7 +81,6 @@ const ProductListScreen = ({ history }) => {
   };
 
   const createProductHandler = () => {
-    // Create Product
     dispatch(createProduct());
   };
 
@@ -98,7 +94,7 @@ const ProductListScreen = ({ history }) => {
           <Button
             className='btn btn-primary my-3'
             variant='submit'
-            onClick={handleShow}
+            onClick={createProductHandler}
           >
             <i className='fas fa-plus mr-1'></i> Create Product
           </Button>
@@ -153,33 +149,6 @@ const ProductListScreen = ({ history }) => {
           </tbody>
         </Table>
       )}
-      {/* Modal */}
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop='static'
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Create Product</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId='productName'>
-              <Form.Label>Product Name</Form.Label>
-              <Form.Control type='text' placeholder='Enter product name' />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant='secondary' onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant='primary' onClick={createProductHandler}>
-            Create
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 };

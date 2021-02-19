@@ -52,12 +52,12 @@ const deleteProduct = asyncHandler(async (req, res) => {
  */
 const createProduct = asyncHandler(async (req, res) => {
   const product = new Product({
-    name: 'Sample Name',
+    name: 'Sample name',
     price: 0,
     user: req.user._id,
     image: '/images/sample.jpg',
     brand: 'Sample',
-    category: 'Sample Category',
+    category: 'Sample category',
     countInStock: 0,
     numReviews: 0,
     description: 'Sample description',
