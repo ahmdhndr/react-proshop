@@ -7,6 +7,8 @@ import Loader from '../components/Loader';
 import { getUserDetails, updateUserProfile } from '../actions/userActions';
 import { myOrderLists } from '../actions/orderActions';
 
+import icon from '../icon/empty-cart.svg';
+
 const ProfileScreen = ({ history }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -113,6 +115,11 @@ const ProfileScreen = ({ history }) => {
           <Loader />
         ) : errorOrders ? (
           <Message variant='danger'>{errorOrders}</Message>
+        ) : !orders.length ? (
+          <div className='text-center'>
+            <img src={icon} alt={icon} width={'200px'} height={'200px'} />
+            <h4>You have no order(s)</h4>
+          </div>
         ) : (
           <Table striped bordered hover responsive className='table-sm'>
             <thead>
