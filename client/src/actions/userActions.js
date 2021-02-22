@@ -17,6 +17,7 @@ import {
   USER_LIST_FAIL,
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
+  USER_LIST_RESET,
   USER_DELETE_REQUEST,
   USER_DELETE_SUCCESS,
   USER_DELETE_FAIL,
@@ -69,7 +70,8 @@ export const logout = () => dispatch => {
   dispatch({ type: USER_LOGOUT });
   dispatch({ type: USER_DETAILS_RESET });
   dispatch({ type: MY_ORDER_LIST_RESET });
-  document.location.href = '/login';
+  dispatch({ type: USER_LIST_RESET });
+  // document.location.href = '/login';
 };
 
 export const register = (name, email, password) => async dispatch => {
