@@ -7,7 +7,16 @@ import Product from '../models/productModel.js';
  * @access  Public
  */
 const getProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+
+  const products = await Product.find({ ...keyword });
 
   res.json(products);
 });
@@ -114,7 +123,7 @@ const createProductReview = asyncHandler(async (req, res) => {
 
   if (product) {
     const alreadyReviewed = product.reviews.find(
-      r => r.user.toString() === r.user._id.toString()
+      r => r.user.toString() === req.user._id.toString()
     );
 
     if (alreadyReviewed) {
